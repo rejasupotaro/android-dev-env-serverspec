@@ -33,6 +33,10 @@ describe file(config['setup_root'] + config['android-sdk']['name']) do
 
       cmd = symlink(extract_file, config['setup_root'] + '/' + config['android-sdk']['name'])
       expect(cmd.return_exit_status?(0)).to be_true
+
+      android_bin = config['setup_root'] + '/' + config['android-sdk']['name'] + '/android-sdk-macosx/tools/android'
+      cmd = android_update(android_bin, config['android-sdk']['components'])
+      expect(cmd.return_exit_status?(0)).to be_true
     end
   }
 end
@@ -50,6 +54,11 @@ end
 def symlink(from, to)
   puts "symlink #{from} to #{to}"
   create_cmd("ln -s #{from} #{to}")
+end
+
+def android_update(android_bin, components)
+  puts "update #{components}"
+  create_cmd("echo y | #{android_bin} update sdk --no-ui --filter #{components.join(',')} --force")
 end
 
 def create_cmd(command)
